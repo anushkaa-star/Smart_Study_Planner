@@ -1,4 +1,6 @@
-public class Task {
+import java.io.Serializable;
+
+public class Task implements Serializable {
     private static int idCounter = 1;
 
     private int id;
@@ -25,26 +27,16 @@ public class Task {
     public String getStatus() { return status; }
 
     public void markCompleted() {
-        if (this.status.equals("Completed")) {
-            System.out.println("Task already completed.");
-        } else {
-            this.status = "Completed";
-        }
+        this.status = "Completed";
     }
 
     public boolean isPending() {
-        return "Pending".equalsIgnoreCase(this.status);
+        return status.equals("Pending");
     }
 
     @Override
     public String toString() {
-        return String.format(
-            "  [ID: %d] Subject   : %s%n"
-            + "           Description: %s%n"
-            + "           Deadline   : %s%n"
-            + "           Priority   : %s%n"
-            + "           Status     : %s",
-            id, subject, description, deadline, priority, status
-        );
+        return String.format("[ID: %-3d] %-12s | %-25s | Deadline: %-10s | Priority: %-7s | Status: %s",
+                id, subject, description, deadline, priority, status);
     }
 }

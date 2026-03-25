@@ -1,35 +1,47 @@
-import java.util.*;
+import java.util.Scanner;
 
 public class SmartStudyPlanner {
-    private static ArrayList<Task> tasks = new ArrayList<>();
     private static Scanner sc = new Scanner(System.in);
+    private static TaskManager manager = new TaskManager();
 
     public static void main(String[] args) {
+        System.out.println("Welcome to Smart Study Planner!");
 
         while (true) {
-            System.out.println("\n===== MAIN MENU =====");
-            System.out.println("1. Add Task");
-            System.out.println("2. View Tasks");
-            System.out.println("3. Mark Complete");
-            System.out.println("4. Delete Task");
-            System.out.println("5. Exit");
-
-            System.out.print("Enter choice: ");
+            printMenu();
             int choice = sc.nextInt();
             sc.nextLine();
 
             switch (choice) {
                 case 1 -> addTask();
-                case 2 -> viewTasks();
-                case 3 -> markTask();
+                case 2 -> manager.viewTasks();
+                case 3 -> markComplete();
                 case 4 -> deleteTask();
-                case 5 -> {
-                    System.out.println("Exiting...");
+                case 5 -> manager.showPendingTasks();
+                case 6 -> searchTask();
+                case 7 -> manager.showSummary();
+                case 8 -> {
+                    System.out.println("Thank you! Exiting...");
                     return;
                 }
-                default -> System.out.println("Invalid choice!");
+                default -> System.out.println("Invalid choice! Please enter 1-8.");
             }
         }
+    }
+
+    private static void printMenu() {
+        System.out.println("\n==============================");
+        System.out.println("     SMART STUDY PLANNER");
+        System.out.println("==============================");
+        System.out.println("1. Add Task");
+        System.out.println("2. View Tasks");
+        System.out.println("3. Mark Complete");
+        System.out.println("4. Delete Task");
+        System.out.println("5. View Pending Tasks");
+        System.out.println("6. Search Task");
+        System.out.println("7. Task Summary");
+        System.out.println("8. Exit");
+        System.out.print("Enter choice: ");
     }
 
     private static void addTask() {
@@ -45,38 +57,32 @@ public class SmartStudyPlanner {
         System.out.print("Priority (High/Medium/Low): ");
         String priority = sc.nextLine();
 
-        tasks.add(new Task(subject, desc, deadline, priority));
-        System.out.println("Task added!");
+        manager.addTask(subject, desc, deadline, priority);
     }
 
-    private static void viewTasks() {
-        if (tasks.isEmpty()) {
-            System.out.println("No tasks available.");
-            return;
+    private static void markComplete() {
+        manager.viewTasks();
+        if (!manager.getAllTasks().isEmpty()) {
+            System.out.print("Enter task ID: ");
+            int id = sc.nextInt();
+            sc.nextLine();
+            manager.markTask(id);
         }
-        for (Task t : tasks) {
-            System.out.println(t);
-        }
-    }
-
-    private static void markTask() {
-        System.out.print("Enter task ID: ");
-        int id = sc.nextInt();
-
-        for (Task t : tasks) {
-            if (t.getId() == id) {
-                t.markCompleted();
-                return;
-            }
-        }
-        System.out.println("Task not found.");
     }
 
     private static void deleteTask() {
-        System.out.print("Enter task ID: ");
-        int id = sc.nextInt();
+        manager.viewTasks();
+        if (!manager.getAllTasks().isEmpty()) {
+            System.out.print("Enter task ID: ");
+            int id = sc.nextInt();
+            sc.nextLine();
+            manager.deleteTask(id);
+        }
+    }
 
-        tasks.removeIf(t -> t.getId() == id);
-        System.out.println("Task deleted (if existed).");
+    private static void searchTask() {
+        System.out.print("Enter keyword: ");
+        String keyword = sc.nextLine();
+        manager.searchTask(keyword);
     }
 }
